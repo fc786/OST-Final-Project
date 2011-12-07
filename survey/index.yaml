@@ -15,3 +15,8 @@ indexes:
   properties:
   - name: date
     direction: desc
+
+- kind: Question
+  ancestor: yes
+  properties:
+  - name: index

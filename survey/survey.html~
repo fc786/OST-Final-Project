@@ -8,9 +8,9 @@
 			{% for question in questions %}
 			<tr>
 				<td>{{ question.index }}</td> 
-				<td><a href="/{{survey_id}}/{{question.key.id}}">{{ question.content }}</a></td>
+				<td><a href="/{{survey_id}}/{{question.index}}">{{ question.content }}</a></td>
 				{% if owner %}
-				<td><form action="/{{survey_id}}/{{question.key.id}}" method="delete"><input type="submit" value="Delete Question"></form></td>
+				<td><form action="/{{survey_id}}/{{question.index}}/delete" method="post"><input type="submit" value="Delete Question"></form></td>
 				{% endif %}
 			</tr>
 			{% endfor %}
@@ -18,7 +18,7 @@
 		<br>
 		{% if owner %}
 		<br>------------------------------------------------------------------------------------------------------
-		<form action="/{{survey_id}}" method="delete"><input type="submit" value="Delete Question"></form>
+		<form action="/{{survey_id}}/delete" method="post"><input type="submit" value="Delete Survey"></form>
 		<form action="/{{survey_id}}" method="post">
 			<table>
 				<tr><td>Question:</td><td><input type="text" name="survey_question" size=50></input></td></tr>
