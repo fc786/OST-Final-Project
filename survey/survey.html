@@ -1,0 +1,39 @@
+<html>
+	<body>
+		<h2>{{survey.title}}</h2>
+		<table>
+			<tr>
+				<td>Id</td><td>Question</td>
+			</tr>
+			{% for question in questions %}
+			<tr>
+				<td>{{ question.index }}</td> 
+				<td><a href="/{{survey_id}}/{{question.key.id}}">{{ question.content }}</a></td>
+				{% if owner %}
+				<td><form action="/{{survey_id}}/{{question.key.id}}" method="delete"><input type="submit" value="Delete Question"></form></td>
+				{% endif %}
+			</tr>
+			{% endfor %}
+		</table>
+		<br>
+		{% if owner %}
+		<br>------------------------------------------------------------------------------------------------------
+		<form action="/{{survey_id}}" method="delete"><input type="submit" value="Delete Survey"></form>
+		<form action="/{{survey_id}}" method="post">
+			<table>
+				<tr><td>Question:</td><td><input type="text" name="survey_question" size=50></input></td></tr>
+				<tr><td>Answer 1:</td><td><input type="text" name="survey_answer_1" size=50></input></td></tr>
+				<tr><td>Answer 2:</td><td><input type="text" name="survey_answer_2" size=50></input></td></tr>
+				<tr><td>Answer 3:</td><td><input type="text" name="survey_answer_3" size=50></input></td></tr>
+				<tr><td>Answer 4:</td><td><input type="text" name="survey_answer_4" size=50></input></td></tr>
+				<tr><td>Answer 5:</td><td><input type="text" name="survey_answer_5" size=50></input></td></tr>
+				<input type="hidden" name="question_number" value="{{question_count}}">
+				<tr><td><input type="submit" value="Add Question"></tr></td>
+			</table>			
+		</form>
+		{% endif %}
+		<br>
+		<a href="/">Back To Main Page</a>
+
+	</body>
+</html>

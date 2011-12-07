@@ -1,1 +1,24 @@
+<html>
+	<body>
+		{{ survey.error }}
+		<table>
+			<tr>
+				<td>Title</td><td>Author</td>
+			</tr>
+			{% for survey in surveys %}
+			<tr>
+				<td><a href="/{{ survey.key.id}}">{{ survey.title }}</a></td><td>{{ survey.author }}</td>
+			</tr>
 
+      			
+			{% endfor %}
+		</table>		
+		<form action="/" method="post">
+      			<div>Input new survey name here: <input type="text" name="survey_name" size=50></textarea></div>
+      			<div><input type="submit" value="Create Survey"></div>
+    		</form>
+
+    <a href="{{ url }}">{{ url_linktext }}</a>
+
+  </body>
+</html>
