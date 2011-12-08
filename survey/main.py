@@ -11,11 +11,12 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 class Vote(db.Model):
 	voter=db.UserProperty(auto_current_user_add=True)
-	answer=db.StringProperty()
+	answer=db.IntegerProperty()
 
 class Question(db.Model):
 	content = db.StringProperty()
 	answers = db.StringListProperty()
+	vote_counts = db.ListProperty(int)
 	index = db.IntegerProperty()
 
 class Survey(db.Model):
@@ -86,9 +87,11 @@ class SurveyHandler(webapp.RequestHandler):
 				question.content = self.request.get('survey_question')
 				question.index = int(self.request.get('question_number'))+1
 				question.answers = []
+				question.vote_counts = []
 				for i in range(1, 5):
 					answer=self.request.get('survey_answer_'+str(i)).rstrip()
 					if answer != "":
+						question.vote_counts.append(0)
 						question.answers.append(answer)
 				question.put()
 				self.redirect("/"+survey_id+"/"+str(question.index),permanent=True)
@@ -112,17 +115,55 @@ class SurveyDeleteHandler(webapp.RequestHandler):
 
 
 class QuestionHandler(webapp.RequestHandler):
-	#returns question page
 	def get(self,survey_id,question_id):
-		if users.get_current_user():
-			path = os.path.join(os.path.dirname(__file__), 'index.html')	
+		user = users.get_current_user()
+		if user:			
+			survey = Survey.get_by_id(int(survey_id))
+			if survey:
+				question = db.Query(Question).ancestor(survey).filter('index = ', int(question_id)).get()
+				if question:
+					template_values = {
+						'survey': survey,
+						'survey_id': survey_id,	
+						'question':question,
+					}
+					path = os.path.join(os.path.dirname(__file__), 'question.html')
+					self.response.out.write(template.render(path, template_values))
+				else:
+					self.redirect("/"+survey_id+"/results")
+			else:
+				self.redirect("/")
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 
 	#adds a vote, goes to nex question
 	def post(self,survey_id,question_id):
-		if users.get_current_user():
-			path = os.path.join(os.path.dirname(__file__), 'index.html')	
+		user = users.get_current_user()
+		if user:
+			survey = Survey.get_by_id(int(survey_id))
+			if survey:
+				question = db.Query(Question).ancestor(survey).filter('index = ', int(question_id)).get()
+				if question:
+					vote = db.Query(Vote).ancestor(question).filter('voter =',user).get()
+					if vote:
+						question.vote_counts[int(self.request.get('answer_choice'))]=question.vote_counts[vote.answer]-1
+					else:
+						vote = Vote(parent=question)
+						vote.voter=user
+						
+					vote.answer=int(self.request.get('answer_choice'))
+					question.vote_counts[vote.answer]=question.vote_counts[vote.answer]+1
+
+					vote.put()
+					question.put()
+					if self.request.get('submit_button')=='Vote':
+						self.redirect('/'+survey_id+'/'+str(question.index + 1))
+					else:
+						self.redirect("/"+survey_id+"/results")
+				else:
+					self.redirect("/"+survey_id)
+			else:
+				self.redirect("/")
 		else:
 			self.redirect(users.create_login_url(self.request.uri))
 
@@ -147,8 +188,28 @@ class QuestionDeleteHandler(webapp.RequestHandler):
 class ResultsHandler(webapp.RequestHandler):
 	#returns results page
 	def get(self,survey_id):
-		path = os.path.join(os.path.dirname(__file__), 'results.html')
-		self.response.out.write(template.render(path, template_values))
+		user = users.get_current_user()
+		if user:			
+			survey = Survey.get_by_id(int(survey_id))
+			if survey:
+				questions=[]
+				questions = db.Query(Question).ancestor(survey)
+				results=[]
+				for question in questions:
+					x =question, zip(question.answers,question.vote_counts)
+					results.append(x)
+				template_values = {
+					'survey': survey,
+					'survey_id': survey_id,	
+					'questions':questions,
+					'results':results,
+				}
+				path = os.path.join(os.path.dirname(__file__), 'results.html')
+				self.response.out.write(template.render(path, template_values))
+			else:
+				self.redirect("/")
+		else:
+			self.redirect(users.create_login_url(self.request.uri))
 
 application = webapp.WSGIApplication([
   ('/', MainPage),

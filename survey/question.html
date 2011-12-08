@@ -1,0 +1,16 @@
+<html>
+	<body>
+		<b>{{survey.title}}</b>
+		<form action="/{{survey_id}}/{{question.index}}" method="post">
+			<br>Question {{question.index}}:
+			<br>{{question.content}}
+			<br>----------------------
+			{% for answer in question.answers %}
+			<br><input type="radio" name ="answer_choice" value="{{forloop.counter0}}">{{answer}}
+			{% endfor %}
+			<br><input type="submit" name="submit_button" value="Vote">
+			<input type="submit" name="submit_button" value="Vote and go to Results">
+		</form>
+		<br>
+	</body>
+</html>
