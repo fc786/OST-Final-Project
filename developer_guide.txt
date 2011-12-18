@@ -39,4 +39,3 @@ ResultsHandler:
 	get:	Queries for all questions for the survey and lists them and their results.
 
 
-

@@ -146,7 +146,7 @@ class QuestionHandler(webapp.RequestHandler):
 				if question:
 					vote = db.Query(Vote).ancestor(question).filter('voter =',user).get()
 					if vote:
-						question.vote_counts[int(self.request.get('answer_choice'))]=question.vote_counts[vote.answer]-1
+						question.vote_counts[vote.answer]=question.vote_counts[vote.answer]-1
 					else:
 						vote = Vote(parent=question)
 						vote.voter=user

@@ -196,7 +196,8 @@ class ResultsHandler(webapp.RequestHandler):
 				questions = db.Query(Question).ancestor(survey)
 				results=[]
 				for question in questions:
-					results.append(question, zip(question.answers,question.vote_counts))
+					x =question, zip(question.answers,question.vote_counts)
+					results.append(x)
 				template_values = {
 					'survey': survey,
 					'survey_id': survey_id,	

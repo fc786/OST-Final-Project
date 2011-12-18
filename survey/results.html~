@@ -3,7 +3,7 @@
 		<b>{{survey.title}}</b>
 		<table>
 			<tr>
-				<td>Id</td><td>Question</td>
+				<td>Id</td><td>Question</td><td>Results</td>
 			</tr>
 			{% for result in results %}
 			<tr>
@@ -17,6 +17,8 @@
 			</tr>
 			{% endfor %}
 		</table>
+		<a href="/{{survey_id}}/">To Survey Page</a>
+		<a href="/">Back To Main Page</a>
 	</body>
 </html>
 

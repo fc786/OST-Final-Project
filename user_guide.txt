@@ -1,0 +1,17 @@
+
+Main Page:
+Can create new surveys by inputting a survey name.
+Also lists all surveys in the system.
+
+Survey Page:
+If you are the user who created the survey, 
+You have the option to delete questions, add questions, or delete the survey.
+
+All users also have a list to all questions.
+You can then choose any question to answer or change your answer to.
+
+Questions Page:
+You choose your answer to the question.
+
+Results page:
+Lists all results to the survey.
